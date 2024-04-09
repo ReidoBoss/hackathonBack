@@ -1,70 +1,85 @@
 const sql = require("../config/config.js");
 
-const Users = function (users){
-  this.username = users.username;
-  this.password = users.password;
-  this.role = users.role;
-  
-  this.text = users.text;
-  this.image = users.image;
-  this.extra1 = users.extra1;
+const Model = function (model){
+  //users
+  this.name = model.name;
+
+  this.username = model.username;
+  this.password = model.password;
+  this.role = model.role;
+
+  //BLOBS
+    //images
+  this.image = model.image;
+  this.image1 = model.image1;
+
+    //video
+  this.video_id = model.video_id;
+  this.video = model.video;
+
+  //Incrementable or Edittable
+  this.value = model.value;
+  this.value1 = model.value1;
+  this.value2 = model.value2;
+
+
+
 
 
 }
 
-//USERS AUTH
-
-Users.getUsers = (result) => {
+Model.getUsers = (result) => {
   sql.query(
-    "SELECT user_id,username, password,role FROM users",
+    "SELECT * FROM users",
     (err, res) => {
       if (err) {
         console.log("Error in executing users table query: ", err);
         result(err, null);
         return;
       }
-      const userDetails = res.map((row) => ({
+      const data = res.map((row) => ({
         user_id: row.user_id,
+        name: row.name,
         username: row.username,
         password: row.password,
         role: row.role,
       }));
 
-      console.log(...userDetails);
-      result(null, userDetails);
+      console.log(...data);
+      result(null, data);
     }
   );
 };
-  //USER GETTER BY ID
-Users.getUserImage = (user_id, result) => {
-    sql.query(
-      "SELECT  * FROM user_image WHERE user_id= ? ",
-      [user_id],
-      (error, queryResult) => {
-        if (error) {
-          console.log("Error in executing user table query", error);
-          result(error, null);
-          return;
-        }
-        const userDetails = queryResult.map((row) => ({
-          user_id: row.user_id,
-          image: row.image,
 
-        }));
-        result(null, userDetails);
+Model.getUserImage = (user_id, result) => {
+  sql.query(
+    "SELECT  * FROM users WHERE user_id= ? ",
+    [user_id],
+    (error, queryResult) => {
+      if (error) {
+        console.log("Error in executing table query", error);
+        result(error, null);
+        return;
       }
-    );
+      const data = queryResult.map((row) => ({
+        user_id: row.user_id,
+        image: row.image,
+
+      }));
+      result(null, data);
+    }
+  );
 };
 
-
-  //USER POSTER
-  Users.addUser = (newUser, result) => {
+Model.addUser = (newUser, result) => {
   sql.query(
     "INSERT INTO users SET ?",
     {
+      name: newUser.name,
       username: newUser.username,
       password: newUser.password,
       role: newUser.role,
+      image : newUser.image,
 
     },
     (error, results) => {
@@ -73,64 +88,61 @@ Users.getUserImage = (user_id, result) => {
         result(error, null);
         return;
       }
-
-      const user_id = results.insertId;
-      console.log(user_id);
-      sql.query(
-        "INSERT INTO user_image SET ?",
-        {
-          user_id: user_id,
-          text : newUser.text,
-          image : newUser.image,
-          extra1 : newUser.extra1,
-        });
-
-
-
+      // const user_id = results.insertId;
+      // sql.query(
+      //   "INSERT INTO user_image SET ?",
+      //   {
+      //     user_id: user_id,
+      //     text : newUser.text,
+      //     image : newUser.image,
+      //     extra1 : newUser.extra1,
+      //   });
       result(null, { ...newUser });
     }
   );
 };
 
-//USER EDITTOR
-// Update user
-Users.updateUser = (userId, updatedUser, result) => {
+Model.getVideo = (video_id, result) => {
   sql.query(
-    "UPDATE users SET username = ?, password = ?, role = ? WHERE user_id = ?",
-    [
-      updatedUser.username, 
-      updatedUser.password, 
-      updatedUser.role, 
-      userId],
-    (error, res) => {
+    "SELECT  * FROM video WHERE video_id= ? ",
+    [video_id],
+    (error, queryResult) => {
       if (error) {
-        console.log("Error in updating user:", error);
+        console.log("Error in executing table query", error);
         result(error, null);
         return;
       }
-
-      result(null, { id: userId, ...updatedUser });
+      const data = queryResult.map((row) => ({
+        video_id: row.video_id,
+        video: row.video,
+      }));
+      result(null, data);
     }
   );
 };
-//DELETE USER by id
 
-Users.deleteUserByID = (userId, result) => {
+// value updater
+Model.updateValueById = (id, incrementBy, result) => {
   sql.query(
-    "DELETE FROM users WHERE user_id = ?",
-    [userId],
-    (err, res) => {
-      if (err) {
-        console.log("Error in deleting user:", err);
-        result(err, null);
+    "UPDATE increment SET value = value + ? WHERE id = ?",
+    [incrementBy, id],
+    (error, queryResult) => {
+      if (error) {
+        console.log("Error in executing table query", error);
+        result(error, null);
         return;
       }
-      console.log(`Deleted user with ID: ${userId}`);
-      result(null, res.affectedRows);
+      result(null, "Value updated successfully");
     }
   );
 };
 
 
 
-module.exports.Users = Users;
+
+
+
+
+
+
+module.exports.Model = Model;

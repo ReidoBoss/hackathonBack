@@ -8,18 +8,17 @@ module.exports = (app) => {
   const upload = multer({ storage: storage });
 
 
-  //USER GETTERS
+  // GETTERS
   router.get("/getUsers", controller.getUsers);
+
   router.get("/getUserImage/:id", controller.getUserImage);
-  //USER POSTER
+  router.get("/getVideo/:id", controller.getVideo);
+  // POSTER
   router.post('/addUser', upload.fields([
     { name: 'image', maxCount: 1 },
-    { name: 'extra1', maxCount: 1 },
   ]), controller.addUser);
-  //USER UPDATER
-  router.put('/updateUser/:id', controller.updateUser); // Route for updating user
-  //USER DELETER
-  router.delete('/deleteUserByID/:id', controller.deleteUserByID); 
+  // UPDATER
+  router.put('/updateValueById/:id', controller.updateValueById);
 
   app.use('/', router);
 };

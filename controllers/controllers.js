@@ -1,7 +1,6 @@
-const { Users } = require("../models/models.js");
+const { Model } = require("../models/models.js");
 
 
-//USERS
 exports.getUsers = (req, res) => {
   if (!req.body) {
     res.status(400).send({
@@ -9,13 +8,13 @@ exports.getUsers = (req, res) => {
     });
     return;
   }
-  Users.getUsers((err, agents) => {
+  Model.getUsers((err, data) => {
     if (err) {
       return res.status(500).send({
         message: err.message || "Some error message",
       });
     }
-    res.send(agents);
+    res.send(data);
   });
 };
 
@@ -26,113 +25,94 @@ exports.getUserImage = (req, res) => {
     });
     return;
   }
-  Users.getUserImage(req.params.id, (err, user) => {
+  Model.getUserImage(req.params.id, (err, data) => {
     if (err) {
       return res.status(500).send({
         message: err.message || "Some error occured",
       });
     }
-    res.send(user);
+    res.send(data);
   });
 };
 
-  //POSTER
-  exports.addUser = (req, res) => {
-    if (!req.body) {
-      res.status(400).send({
-        message: "Content cannot be empty",
-      });
-    }
-    
-    const { image, extra1 } = req.files;
+exports.addUser = (req, res) => {
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content cannot be empty",
+    });
+  }
+  
+  // const { image, extra1 } = req.files;
+  const { image } = req.files;
+  // if (!image) {
+  //   res.status(400).send({
+  //     message: "Main image is needed",
+  //   });
+  //   return;
+  // }
 
-    if (!image) {
-      res.status(400).send({
-        message: "Main image is needed",
+  const userDetails = new Model({
+    name: req.body.name,
+    username: req.body.username,
+    password: req.body.password,
+    role: req.body.role,
+    image: image[0] ? image[0].buffer : null,
+    // extra1: extra1[0] ? extra1[0].buffer : null,
+
+
+  });
+
+  Model.addUser(userDetails, (err, result) => {
+    if (err) {
+      res.status(500).send({
+        message: err.message || 'Internal Server Error',
       });
       return;
     }
-  
-    const userDetails = new Users({
-      username: req.body.username,
-      password: req.body.password,
-      role: req.body.role,
-      text: req.body.text,
 
-      image: image[0] ? image[0].buffer : null,
-      extra1: extra1[0] ? extra1[0].buffer : null,
-
-
-    });
-
-    Users.addUser(userDetails, (err, result) => {
-      if (err) {
-        res.status(500).send({
-          message: err.message || 'Internal Server Error',
-        });
-        return;
-      }
-  
-      res.status(201).send(result); 
-    });
+    res.status(201).send(result); 
+  });
 };
 
-// Update user by ID
-exports.updateUser = (req, res) => {
+exports.getVideo = (req, res) => {
   if (!req.body) {
     res.status(400).send({
       message: "Content cannot be empty",
     });
     return;
   }
-
-  const userId = req.params.id;
-  const updatedUserData = {
-    username: req.body.username,
-    password: req.body.password,
-    role: req.body.role
-  };
-
-  Users.updateUser(userId, updatedUserData, (err, updatedUser) => {
+  Model.getVideo(req.params.id, (err, data) => {
     if (err) {
-      if (err.kind === "not_found") {
-        return res.status(404).send({
-          message: `User with ID ${userId} not found`,
-        });
-      }
       return res.status(500).send({
-        message: `Error updating user with ID ${userId}`,
+        message: err.message || "Some error occured",
       });
     }
-    res.send(updatedUser);
+    res.send(data);
   });
 };
 
-//USER DELETER
-exports.deleteUserByID = (req, res) => {
-  if (!req.body) {
+exports.updateValueById = (req, res) => {
+  if (!req.body || !req.params.id || !req.body.incrementBy) {
     res.status(400).send({
-      message: "Content cannot be empty",
+      message: "Invalid request. Please provide user ID and increment value.",
     });
     return;
   }
+  
+  const user_id = req.params.id;
+  const incrementBy = req.body.incrementBy;
 
-  Users.deleteUserByID(req.params.id, (err, affectedRows) => {
+  Model.updateValueById(user_id, incrementBy, (err, result) => {
     if (err) {
-      return res.status(500).send({
-        message: err.message || "Some error occurred while deleting the user",
+      res.status(500).send({
+        message: err.message || 'Internal Server Error',
       });
+      return;
     }
 
-    if (affectedRows === 0) {
-      return res.status(404).send({
-        message: `User with ID ${req.params.id} not found`,
-      });
-    }
-
-    res.send({
-      message: "User deleted successfully",
-    });
+    res.status(200).send(result); 
   });
 };
- 
+
+
+
