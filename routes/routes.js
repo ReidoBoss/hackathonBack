@@ -17,6 +17,8 @@ module.exports = (app) => {
   router.post('/addUser', upload.fields([
     { name: 'image', maxCount: 1 },
   ]), controller.addUser);
+  router.post('/sendMail', upload.fields([]), controller.sendMail);
+
   // UPDATER
   router.put('/updateValueById/:id', controller.updateValueById);
 

@@ -6,6 +6,7 @@ const Model = function (model){
 
   this.username = model.username;
   this.password = model.password;
+  this.email = model.email;
   this.role = model.role;
 
   //BLOBS
@@ -72,34 +73,35 @@ Model.getUserImage = (user_id, result) => {
 };
 
 Model.addUser = (newUser, result) => {
-  sql.query(
-    "INSERT INTO users SET ?",
-    {
-      name: newUser.name,
-      username: newUser.username,
-      password: newUser.password,
-      role: newUser.role,
-      image : newUser.image,
+  // sql.query(
+  //   "INSERT INTO users SET ?",
+  //   {
+  //     name: newUser.name,
+  //     username: newUser.username,
+  //     password: newUser.password,
+  //     email: newUser.email,
+  //     role: newUser.role,
+  //     image : newUser.image,
 
-    },
-    (error, results) => {
-      if (error) {
-        console.log("Error: ", error);
-        result(error, null);
-        return;
-      }
-      // const user_id = results.insertId;
-      // sql.query(
-      //   "INSERT INTO user_image SET ?",
-      //   {
-      //     user_id: user_id,
-      //     text : newUser.text,
-      //     image : newUser.image,
-      //     extra1 : newUser.extra1,
-      //   });
-      result(null, { ...newUser });
-    }
-  );
+  //   },
+  //   (error, results) => {
+  //     if (error) {
+  //       console.log("Error: ", error);
+  //       result(error, null);
+  //       return;
+  //     }
+  //     // const user_id = results.insertId;
+  //     // sql.query(
+  //     //   "INSERT INTO user_image SET ?",
+  //     //   {
+  //     //     user_id: user_id,
+  //     //     text : newUser.text,
+  //     //     image : newUser.image,
+  //     //     extra1 : newUser.extra1,
+  //     //   });
+  //     result(null, { ...newUser });
+  //   }
+  // );
 };
 
 Model.getVideo = (video_id, result) => {
@@ -136,6 +138,8 @@ Model.updateValueById = (id, incrementBy, result) => {
     }
   );
 };
+
+
 
 
 
