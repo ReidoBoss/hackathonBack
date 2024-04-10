@@ -15,8 +15,16 @@ module.exports = (app) => {
   router.get("/getVideo/:id", controller.getVideo);
   // POSTER
   router.post('/addUser', upload.fields([
-    { name: 'image', maxCount: 1 },
+    { name: 'picture', maxCount: 1 },
   ]), controller.addUser);
+
+  router.post('/addEmployer', upload.fields([
+    { name: 'image', maxCount: 1 },
+  ]), controller.addEmployer);
+  router.post('/addJob', upload.fields([
+    { name: 'image', maxCount: 1 },
+  ]), controller.addJob);
+
   router.post('/sendMail', upload.fields([]), controller.sendMail);
 
   // UPDATER

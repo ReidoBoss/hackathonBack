@@ -4,7 +4,7 @@ const con = createPool({
   host: "localhost",
   user: "root",
   password: "",
-  database: "hackathon",
+  database: "hack",
 });
 
 

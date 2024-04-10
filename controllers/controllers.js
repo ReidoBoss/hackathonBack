@@ -158,9 +158,7 @@ exports.sendMail = (req, res) => {
           </div>
           <div class="content">
               <p class="title">Welcome to Our App</p>
-              <p class="message">Dear User,</p>
-              <p class="message">Thank you for registering with our app. We are excited to have you on board!</p>
-              <p class="message">Please feel free to explore our features and reach out to us if you have any questions or need assistance.</p>
+             ${req.body.message}
               <a href="#" class="button">Get Started</a>
           </div>
       </div>
@@ -184,7 +182,7 @@ exports.addUser = (req, res) => {
   }
   
   // const { image, extra1 } = req.files;
-  const { image } = req.files;
+  const { picture } = req.files;
   // if (!image) {
   //   res.status(400).send({
   //     message: "Main image is needed",
@@ -194,19 +192,29 @@ exports.addUser = (req, res) => {
 
 
 
-  const userDetails = new Model({
-    name: req.body.name,
+  const details = new Model({
+    first_name: req.body.first_name,
+    middle_name: req.body.middle_name,
+    last_name: req.body.last_name,
+    email: req.body.email,
+    birthdate: req.body.birthdate,
+    gender: req.body.gender,
+    school_grad: req.body.school_grad,
+    experience: req.body.experience,
     username: req.body.username,
     password: req.body.password,
-    email: req.body.email,
-    role: req.body.role,
-    image: image[0] ? image[0].buffer : null,
+    skills: req.body.skills,
+    objective: req.body.objective,
+    position: req.body.position,
+    achievements: req.body.achievements,
+
+    picture: picture[0] ? picture[0].buffer : null,
     // extra1: extra1[0] ? extra1[0].buffer : null,
 
 
   });
 
-  Model.addUser(userDetails, (err, result) => {
+  Model.addUser(details, (err, result) => {
     if (err) {
       res.status(500).send({
         message: err.message || 'Internal Server Error',
@@ -217,6 +225,79 @@ exports.addUser = (req, res) => {
     res.status(201).send(result); 
   });
 };
+
+exports.addEmployer = (req, res) => {
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content cannot be empty",
+    });
+  }
+  
+  const { image } = req.files;
+
+  const details = new Model({
+    company_name: req.body.company_name,
+    employer_name: req.body.employer_name,
+    email: req.body.email,
+    image: image[0] ? image[0].buffer : null,
+
+
+  });
+
+  Model.addEmployer(details, (err, result) => {
+    if (err) {
+      res.status(500).send({
+        message: err.message || 'Internal Server Error',
+      });
+      return;
+    }
+
+    res.status(201).send(result); 
+  });
+};
+
+exports.addJob = (req, res) => {
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content cannot be empty",
+    });
+  }
+  console.log("yeah",req.body)
+  
+  const { image } = req.files;
+
+  const details = new Model({
+    employer_id : req.body.employer_id,
+    salary : req.body.salary,
+    position : req.body.position,
+    job_type : req.body.job_type,
+    experience : req.body.experience,
+    job_title : req.body.job_title,
+    job_description : req.body.job_description,
+    step1 : req.body.step1,
+    step2 : req.body.step2,
+    step3 : req.body.step3,
+    step4 : req.body.step4,
+    step5 : req.body.step5,
+    location : req.body.location,
+
+    image: image[0] ? image[0].buffer : null,
+
+
+  });
+
+  Model.addJob(details, (err, result) => {
+    if (err) {
+      res.status(500).send({
+        message: err.message || 'Internal Server Error',
+      });
+      return;
+    }
+
+    res.status(201).send(result); 
+  });
+};
+
 
 exports.getVideo = (req, res) => {
   if (!req.body) {
