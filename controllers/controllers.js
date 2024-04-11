@@ -3,50 +3,68 @@ const { sendEmail } = require('../emailHelper/emailHelper'); // Adjust the path 
 
 
 exports.getUsers = (req, res) => {
-  if (!req.body) {
-    res.status(400).send({
-      message: "Content cannot be empty",
-    });
-    return;
-  }
-  Model.getUsers((err, data) => {
-    if (err) {
-      return res.status(500).send({
-        message: err.message || "Some error message",
-      });
+    if (!req.body) {
+        res.status(400).send({
+            message: "Content cannot be empty",
+        });
+        return;
     }
-    res.send(data);
-  });
+    Model.getUsers((err, data) => {
+        if (err) {
+            return res.status(500).send({
+                message: err.message || "Some error message",
+            });
+        }
+        res.send(data);
+    });
 };
 
-exports.getUserImage = (req, res) => {
-  if (!req.body) {
-    res.status(400).send({
-      message: "Content cannot be empty",
-    });
-    return;
-  }
-  Model.getUserImage(req.params.id, (err, data) => {
-    if (err) {
-      return res.status(500).send({
-        message: err.message || "Some error occured",
-      });
+exports.getJobs = (req, res) => {
+    if (!req.body) {
+        res.status(400).send({
+            message: "Content cannot be empty",
+        });
+        return;
     }
-    res.send(data);
-  });
+    Model.getJobs((err, data) => {
+        if (err) {
+            return res.status(500).send({
+                message: err.message || "Some error message",
+            });
+        }
+        res.send(data);
+    });
+};
+
+
+exports.getUserImage = (req, res) => {
+    if (!req.body) {
+        res.status(400).send({
+            message: "Content cannot be empty",
+        });
+        return;
+    }
+    Model.getUserImage(req.params.id, (err, data) => {
+        if (err) {
+            return res.status(500).send({
+                message: err.message || "Some error occured",
+            });
+        }
+        res.send(data);
+    });
 };
 
 
 exports.sendMail = (req, res) => {
-  if (!req.body) {
-    res.status(400).send({
-      message: "Content cannot be empty",
-    });
-  }
-  
-  const newUserEmail = req.body.email;
-  const welcomeSubject = req.body.subject;
-  const welcomeMessage = `
+    if (!req.body) {
+        res.status(400).send({
+            message: "Content cannot be empty",
+        });
+    }
+
+    const newUserEmail = req.body.email;
+    const welcomeSubject = req.body.subject;
+    const welcomeMessage = `
   <!DOCTYPE html>
   <html lang="en">
   <head>
@@ -169,175 +187,172 @@ exports.sendMail = (req, res) => {
   
   `;
 
-  sendEmail(newUserEmail, welcomeSubject, welcomeMessage);
+    sendEmail(newUserEmail, welcomeSubject, welcomeMessage);
 
-  res.status(201).send(); 
+    res.status(201).send();
 };
 
 exports.addUser = (req, res) => {
-  if (!req.body) {
-    res.status(400).send({
-      message: "Content cannot be empty",
-    });
-  }
-  
-  // const { image, extra1 } = req.files;
-  const { picture } = req.files;
-  // if (!image) {
-  //   res.status(400).send({
-  //     message: "Main image is needed",
-  //   });
-  //   return;
-  // }
-
-
-
-  const details = new Model({
-    first_name: req.body.first_name,
-    middle_name: req.body.middle_name,
-    last_name: req.body.last_name,
-    email: req.body.email,
-    birthdate: req.body.birthdate,
-    gender: req.body.gender,
-    school_grad: req.body.school_grad,
-    experience: req.body.experience,
-    username: req.body.username,
-    password: req.body.password,
-    skills: req.body.skills,
-    objective: req.body.objective,
-    position: req.body.position,
-    achievements: req.body.achievements,
-
-    picture: picture[0] ? picture[0].buffer : null,
-    // extra1: extra1[0] ? extra1[0].buffer : null,
-
-
-  });
-
-  Model.addUser(details, (err, result) => {
-    if (err) {
-      res.status(500).send({
-        message: err.message || 'Internal Server Error',
-      });
-      return;
+    if (!req.body) {
+        res.status(400).send({
+            message: "Content cannot be empty",
+        });
     }
 
-    res.status(201).send(result); 
-  });
+    // const { image, extra1 } = req.files;
+    const { picture } = req.files;
+    // if (!image) {
+    //   res.status(400).send({
+    //     message: "Main image is needed",
+    //   });
+    //   return;
+    // }
+
+
+
+    const details = new Model({
+        first_name: req.body.first_name,
+        middle_name: req.body.middle_name,
+        last_name: req.body.last_name,
+        email: req.body.email,
+        birthdate: req.body.birthdate,
+        gender: req.body.gender,
+        school_grad: req.body.school_grad,
+        experience: req.body.experience,
+        username: req.body.username,
+        password: req.body.password,
+        skills: req.body.skills,
+        objective: req.body.objective,
+        position: req.body.position,
+        achievements: req.body.achievements,
+
+        picture: picture[0] ? picture[0].buffer : null,
+        // extra1: extra1[0] ? extra1[0].buffer : null,
+
+
+    });
+
+    Model.addUser(details, (err, result) => {
+        if (err) {
+            res.status(500).send({
+                message: err.message || 'Internal Server Error',
+            });
+            return;
+        }
+
+        res.status(201).send(result);
+    });
 };
 
 exports.addEmployer = (req, res) => {
-  if (!req.body) {
-    res.status(400).send({
-      message: "Content cannot be empty",
-    });
-  }
-  
-  const { image } = req.files;
-
-  const details = new Model({
-    company_name: req.body.company_name,
-    employer_name: req.body.employer_name,
-    email: req.body.email,
-    image: image[0] ? image[0].buffer : null,
-
-
-  });
-
-  Model.addEmployer(details, (err, result) => {
-    if (err) {
-      res.status(500).send({
-        message: err.message || 'Internal Server Error',
-      });
-      return;
+    if (!req.body) {
+        res.status(400).send({
+            message: "Content cannot be empty",
+        });
     }
 
-    res.status(201).send(result); 
-  });
+    const { image } = req.files;
+
+    const details = new Model({
+        company_name: req.body.company_name,
+        employer_name: req.body.employer_name,
+        email: req.body.email,
+        image: image[0] ? image[0].buffer : null,
+
+
+    });
+
+    Model.addEmployer(details, (err, result) => {
+        if (err) {
+            res.status(500).send({
+                message: err.message || 'Internal Server Error',
+            });
+            return;
+        }
+
+        res.status(201).send(result);
+    });
 };
 
 exports.addJob = (req, res) => {
-  if (!req.body) {
-    res.status(400).send({
-      message: "Content cannot be empty",
-    });
-  }
-  console.log("yeah",req.body)
-  
-  const { image } = req.files;
-
-  const details = new Model({
-    employer_id : req.body.employer_id,
-    salary : req.body.salary,
-    position : req.body.position,
-    job_type : req.body.job_type,
-    experience : req.body.experience,
-    job_title : req.body.job_title,
-    job_description : req.body.job_description,
-    step1 : req.body.step1,
-    step2 : req.body.step2,
-    step3 : req.body.step3,
-    step4 : req.body.step4,
-    step5 : req.body.step5,
-    location : req.body.location,
-
-    image: image[0] ? image[0].buffer : null,
-
-
-  });
-
-  Model.addJob(details, (err, result) => {
-    if (err) {
-      res.status(500).send({
-        message: err.message || 'Internal Server Error',
-      });
-      return;
+    if (!req.body) {
+        res.status(400).send({
+            message: "Content cannot be empty",
+        });
     }
+    console.log("yeah", req.body)
 
-    res.status(201).send(result); 
-  });
+    const { image } = req.files;
+
+    const details = new Model({
+        employer_id: req.body.employer_id,
+        salary: req.body.salary,
+        position: req.body.position,
+        job_type: req.body.job_type,
+        experience: req.body.experience,
+        job_title: req.body.job_title,
+        job_description: req.body.job_description,
+        step1: req.body.step1,
+        step2: req.body.step2,
+        step3: req.body.step3,
+        step4: req.body.step4,
+        step5: req.body.step5,
+        location: req.body.location,
+
+        image: image[0] ? image[0].buffer : null,
+
+
+    });
+
+    Model.addJob(details, (err, result) => {
+        if (err) {
+            res.status(500).send({
+                message: err.message || 'Internal Server Error',
+            });
+            return;
+        }
+
+        res.status(201).send(result);
+    });
 };
 
 
 exports.getVideo = (req, res) => {
-  if (!req.body) {
-    res.status(400).send({
-      message: "Content cannot be empty",
-    });
-    return;
-  }
-  Model.getVideo(req.params.id, (err, data) => {
-    if (err) {
-      return res.status(500).send({
-        message: err.message || "Some error occured",
-      });
+    if (!req.body) {
+        res.status(400).send({
+            message: "Content cannot be empty",
+        });
+        return;
     }
-    res.send(data);
-  });
+    Model.getVideo(req.params.id, (err, data) => {
+        if (err) {
+            return res.status(500).send({
+                message: err.message || "Some error occured",
+            });
+        }
+        res.send(data);
+    });
 };
 
 exports.updateValueById = (req, res) => {
-  if (!req.body || !req.params.id || !req.body.incrementBy) {
-    res.status(400).send({
-      message: "Invalid request. Please provide user ID and increment value.",
-    });
-    return;
-  }
-  
-  const user_id = req.params.id;
-  const incrementBy = req.body.incrementBy;
-
-  Model.updateValueById(user_id, incrementBy, (err, result) => {
-    if (err) {
-      res.status(500).send({
-        message: err.message || 'Internal Server Error',
-      });
-      return;
+    if (!req.body || !req.params.id || !req.body.incrementBy) {
+        res.status(400).send({
+            message: "Invalid request. Please provide user ID and increment value.",
+        });
+        return;
     }
 
-    res.status(200).send(result); 
-  });
+    const user_id = req.params.id;
+    const incrementBy = req.body.incrementBy;
+
+    Model.updateValueById(user_id, incrementBy, (err, result) => {
+        if (err) {
+            res.status(500).send({
+                message: err.message || 'Internal Server Error',
+            });
+            return;
+        }
+
+        res.status(200).send(result);
+    });
 };
-
-
-
